@@ -166,6 +166,10 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Normalizar nome da imagem
+        run: |
+          echo "IMAGE_NAME_LOWER=$(echo '${{ env.IMAGE_NAME }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+
 
       - name: Build e push da imagem
         uses: docker/build-push-action@v6
@@ -173,8 +177,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
